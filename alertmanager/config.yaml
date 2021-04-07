@@ -1,0 +1,17 @@
+global:
+  resolve_timeout: 1m
+  slack_api_url: "https://hooks.slack.com/services/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"
+  http_config:
+    tls_config:
+      insecure_skip_verify: true
+    proxy_url: "http://g3.konicaminolta.jp:8080/"
+
+route:
+  receiver: "slack"
+
+receivers:
+  - name: "slack"
+    slack_configs:
+      - send_resolved: true
+        channel: "#test-prometheus-alert"
+        text: "{{ .CommonAnnotations.text }}"

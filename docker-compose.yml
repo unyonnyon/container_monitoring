@@ -4,7 +4,6 @@ services:
   prometheus:
     image: prom/prometheus:v2.21.0
     container_name: monitoring_prometheus
-    restart: unless-stopped
     volumes:
       - ./prometheus/:/etc/prometheus/
       - prometheus-data:/prometheus
@@ -52,6 +51,23 @@ services:
     # - GF_SMTP_USER=myadrress@gmail.com
     # - GF_SMTP_PASSWORD=mypassword
     # - GF_SMTP_FROM_ADDRESS=myaddress@gmail.com
+
+  alertmanager:
+    image: prom/alertmanager:v0.20.0
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager:/etc/alertmanager
+    command: "--config.file=/etc/alertmanager/config.yaml"
+    expose:
+      - 9093
+    ports:
+      - 9093:9093
+
+  pushgateway:
+    image: prom/pushgateway:v1.4.0
+    container_name: monitoring_pushgateway
+    ports:
+      - 9091:9091
 
 volumes:
   grafana-data:

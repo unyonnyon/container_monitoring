@@ -1,0 +1,22 @@
+groups:
+  - name: pushgateway
+    rules:
+      - alert: SamplePythonClient
+        expr: time() - push_time_seconds{exported_job="sample_job"} > 60
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "sample_job down"
+          description: "sample_job down"
+          text: "めっちゃ適当なテキスト"
+
+      - alert: instance_down
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: mochimochi
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+          text: "心底まじめなテキスト"
