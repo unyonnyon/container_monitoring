@@ -1,0 +1,15 @@
+{
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python"
+  },
+  "python.languageServer": "Pylance",
+  "python.pythonPath": "/home/muraji/.local/share/virtualenvs/prometheus_client-LYCOwaKZ/bin/python",
+  "python.analysis.extraPaths": [
+    "/home/muraji/work/docker/container_monitoring/prometheus_client_pull/src"
+  ],
+  "editor.renderWhitespace": "boundary",
+  "editor.formatOnSave": true,
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
