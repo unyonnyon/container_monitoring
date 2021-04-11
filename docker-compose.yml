@@ -15,15 +15,22 @@ services:
     ports:
       - 9090:9090
 
-  node-exporter:
+  node-exporter-backend:
     image: prom/node-exporter:latest
-    container_name: monitoring_node_exporter
+    container_name: monitoring_node_exporter_backend
+    restart: unless-stopped
+    expose:
+      - 9100
+
+  node-exporter-frontend:
+    image: prom/node-exporter:latest
+    container_name: monitoring_node_exporter_frontend
     restart: unless-stopped
     expose:
       - 9100
 
   cadvisor:
-    image: google/cadvisor:latest
+    image: google/cadvisor:canary
     container_name: monitoring_cadvisor
     restart: unless-stopped
     volumes:

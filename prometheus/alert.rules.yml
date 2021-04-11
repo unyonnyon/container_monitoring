@@ -11,12 +11,36 @@ groups:
           description: "sample_job down"
           text: "めっちゃ適当なテキスト"
 
-      - alert: instance_down
-        expr: up == 0
+  - name: node-exporter
+    rules:
+      - alert: instance_down_frontend
+        expr: up{team="frontend"} == 0
         for: 1m
         labels:
-          severity: mochimochi
+          severity: critical
         annotations:
           summary: "Instance {{ $labels.instance }} down"
           description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
-          text: "心底まじめなテキスト"
+          text: "node-exporter instance down at frontend"
+
+      - alert: instance_down_backend
+        expr: up{team="backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+          text: "node-exporter instance down at frontend"
+
+  - name: cadvisor
+    rules:
+      - record: cadvisor_job:container_last_seen_by_project
+        expr: sum without(container_label_com_docker_compose_config_hash,id) (container_last_seen{container_label_com_docker_compose_project="container_monitoring"})
+      - alert: instance_down_container
+        expr: time() - cadvisor_job:container_last_seen_by_project > 60
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          text: "down container {{ $labels.name }}"

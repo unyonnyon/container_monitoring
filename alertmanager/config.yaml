@@ -1,17 +1,30 @@
 global:
   resolve_timeout: 1m
-  slack_api_url: "https://hooks.slack.com/services/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"
-  http_config:
-    tls_config:
-      insecure_skip_verify: true
-    proxy_url: "http://g3.konicaminolta.jp:8080/"
 
 route:
-  receiver: "slack"
+  receiver: slack
+  routes:
+    - receiver: slack
+      continue: true
+    - match:
+        team: frontend
+      receiver: team-frontend
+    - match:
+        team: backend
+      receiver: team-backend
 
 receivers:
-  - name: "slack"
+  - name: slack
     slack_configs:
       - send_resolved: true
         channel: "#test-prometheus-alert"
         text: "{{ .CommonAnnotations.text }}"
+        api_url: https://hooks.slack.com/services/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
+  - name: team-frontend
+    slack_configs:
+      - channel: "#team-frontend"
+        api_url: https://hooks.slack.com/services/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
+  - name: team-backend
+    slack_configs:
+      - channel: "#team-backend"
+        api_url: https://hooks.slack.com/services/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
