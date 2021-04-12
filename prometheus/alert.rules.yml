@@ -35,11 +35,31 @@ groups:
 
   - name: cadvisor
     rules:
-      - record: cadvisor_job:container_last_seen_by_project
+      - record: cadvisor_job:container_last_seen_by_project:container_monitoring
         expr: sum without(container_label_com_docker_compose_config_hash,id) (container_last_seen{container_label_com_docker_compose_project="container_monitoring"})
-      - alert: instance_down_container
-        expr: time() - cadvisor_job:container_last_seen_by_project > 60
-        for: 1m
+      - alert: instance_down_container_monitoring
+        expr: time() - cadvisor_job:container_last_seen_by_project:container_monitoring > 60
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          text: "down container {{ $labels.name }}"
+
+      - record: cadvisor_job:container_last_seen_by_project:resin_visualizer
+        expr: sum without(container_label_com_docker_compose_config_hash,id) (container_last_seen{container_label_com_docker_compose_project="resin_visualizer"})
+      - alert: instance_down_resin_visualizer
+        expr: time() - cadvisor_job:container_last_seen_by_project:resin_visualizer > 60
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          text: "down container {{ $labels.name }}"
+
+      - record: cadvisor_job:container_last_seen_by_project:trend_monitoring
+        expr: sum without(container_label_com_docker_compose_config_hash,id) (container_last_seen{container_label_com_docker_compose_project="trend_monitoring"})
+      - alert: instance_down_trend_monitoring
+        expr: time() - cadvisor_job:container_last_seen_by_project:trend_monitoring > 60
+        for: 2m
         labels:
           severity: critical
         annotations:

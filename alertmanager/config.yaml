@@ -1,5 +1,8 @@
 global:
-  resolve_timeout: 1m
+  http_config:
+    tls_config:
+      insecure_skip_verify: true
+    proxy_url: http://g3.konicaminolta.jp:8080
 
 route:
   receiver: slack

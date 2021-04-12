@@ -1,0 +1,75 @@
+version: "3.4"
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.21.0
+    container_name: monitoring_prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    expose:
+      - 9090
+    ports:
+      - 9090:9090
+
+  node-exporter-backend:
+    image: prom/node-exporter:latest
+    container_name: monitoring_node_exporter_backend
+    restart: unless-stopped
+    expose:
+      - 9100
+
+  node-exporter-frontend:
+    image: prom/node-exporter:latest
+    container_name: monitoring_node_exporter_frontend
+    restart: unless-stopped
+    expose:
+      - 9100
+
+  cadvisor:
+    image: google/cadvisor:canary
+    container_name: monitoring_cadvisor
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    expose:
+      - 8080
+
+  grafana:
+    image: grafana/grafana:7.2.0-beta1-ubuntu
+    container_name: monitoring_grafana
+    restart: unless-stopped
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=mochi
+      - GF_USERS_ALLOW_SIGN_UP=false
+
+  alertmanager:
+    image: prom/alertmanager:v0.20.0
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager:/etc/alertmanager
+    command: "--config.file=/etc/alertmanager/config.yaml"
+    expose:
+      - 9093
+    ports:
+      - 9093:9093
+
+  pushgateway:
+    image: prom/pushgateway:v1.4.0
+    container_name: monitoring_pushgateway
+    ports:
+      - 9091:9091
+
+volumes:
+  grafana-data:
+  prometheus-data:
